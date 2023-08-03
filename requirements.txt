@@ -1,0 +1,9 @@
+streamlit==1.24.1
+pip==22.0.3
+unstructured==0.8.4
+unstructured-inference==0.5.4
+pypandoc
+pyopenssl
+streamlit_extras
+llama_index==0.7.8
+langchain==0.0.232
