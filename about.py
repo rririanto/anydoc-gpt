@@ -12,7 +12,7 @@ def intro():
      st.info("""
 Approximately Around 80% of enterprise data is in difficult formats like HTML, PDF, CSV, PNG, PPTX, etc. AnyDocGPT simplifies this by effortlessly extracting and converting the complex data for use with GPT AI. 
 
-The process involves using unstructured.io and GPT OpenAI to retrieve information from your document. We don't store your OpenAI API and doc data, and the source code is open-source for your review.
+The process involves using unstructured.io and GPT OpenAI to retrieve information from your document. We don't store your OpenAI API and doc data, and the source code is open-source for your review [![Star](https://img.shields.io/github/stars/rririanto/anydoc-gpt.svg?logo=github&style=social)](https://github.com/rririanto/anydoc-gpt)
  
 If you find my code helpful, you can support me by buying me a coffee. [![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee--yellow.svg?logo=buy-me-a-coffee&logoColor=orange&style=social)](https://www.buymeacoffee.com/rririanto)
 
