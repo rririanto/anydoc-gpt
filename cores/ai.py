@@ -38,10 +38,10 @@ STUFF_PROMPT = PromptTemplate(
 )
 
 
-def split_text_into_chunks(text):
+def split_text_into_chunks(text, model):
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         # , length_function=len  # 800
-        model_name="text-davinci-003", chunk_size=256, chunk_overlap=20,
+        model_name=model, chunk_size=256, chunk_overlap=20,
     )
     chunked_docs = []
     chunks = text_splitter.split_text(text)
@@ -59,10 +59,15 @@ def create_vectorstore(text_chunks, openai_api_key):
     return FAISS.from_documents(documents=text_chunks, embedding=embeddings)
 
 
-def query_file(query, openai_api_key, vectorstore):
-    llm = OpenAI(
-        openai_api_key=openai_api_key, temperature=0.25, model='text-davinci-003'
-    )
+def query_file(query, openai_api_key, model, vectorstore):
+    if "gpt" in model:
+        llm = ChatOpenAI(
+            openai_api_key=openai_api_key, temperature=0.25, model=model
+        )
+    else:
+         llm = OpenAI(
+            openai_api_key=openai_api_key, temperature=0.25, model=model
+        )
     chain = load_qa_with_sources_chain(
         llm=llm,
         chain_type="stuff",

@@ -1,6 +1,7 @@
 import streamlit as st
 from cores.ai import  split_text_into_chunks, create_vectorstore, query_file
 from cores.extraction import extract_text, send_file_to_unstructured_api
+from cores.openai_models import get_gpt_models
 import time
 from about import intro
 
@@ -9,7 +10,7 @@ def boolean_to_string(value):
 
 
 @st.cache_data
-def process_document(uploaded_file, unstructured_api_input, openai_api_key, **settings):
+def process_document(uploaded_file, unstructured_api_input,openai_api_key, model, **settings):
     start_time = time.time()
     with st.spinner("Extracting document. This may take a while⏳"):
         try:
@@ -20,7 +21,7 @@ def process_document(uploaded_file, unstructured_api_input, openai_api_key, **se
                 texts = extract_text(
                     uploaded_file=uploaded_file, **settings)
 
-            text_chunks = split_text_into_chunks(texts)
+            text_chunks = split_text_into_chunks(texts, model)
             return create_vectorstore(text_chunks, openai_api_key)
         except Exception as e:
             st.error(f"Failed to process document: {e}")
@@ -42,12 +43,16 @@ def main():
         st.session_state.advance = True
 
     openai_api_key = st.text_input(
-            "OpenAI API Key",
+            "Enter your OpenAI API key to get started",
             type="password",
             placeholder="Paste your OpenAI API key here (sk-...)",
             help="You can get your API key from https://platform.openai.com/account/api-keys.",  # noqa: E501,
     )
-
+    if not openai_api_key:
+        st.stop()
+    
+    model_list = get_gpt_models(openai_api_key)
+    model = st.selectbox("Choose your model", tuple(model_list), index=4)
     active_online_api = None 
     unstructured_api_input = None
     with st.expander("Advance Options", expanded=st.session_state.get("advance", False)):
@@ -73,13 +78,13 @@ def main():
     uploaded_file = st.file_uploader(
         "Upload your document. Accept (HTML, PDF, CSV, PNG, PPTX, and more)")
     if uploaded_file is not None:
-        vectorstore = process_document(uploaded_file, unstructured_api_input, openai_api_key, **settings)
+        vectorstore = process_document(uploaded_file, unstructured_api_input, openai_api_key, model, **settings)
 
         query = st.text_input("Ask your document")
         if not query:
             st.stop()
 
-        answer = query_file(query, openai_api_key, vectorstore)
+        answer = query_file(query, openai_api_key, model, vectorstore)
         st.write("### ANSWER")
         st.write(answer)
 
