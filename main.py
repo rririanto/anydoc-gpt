@@ -76,7 +76,7 @@ def main():
             "For more information visit: https://unstructured-io.github.io/unstructured/api.html")
 
     uploaded_file = st.file_uploader(
-        "Upload your document. Accept (HTML, PDF, CSV, PNG, PPTX, and more)")
+        "Upload your document", help="Suported document: .eml, .html, .json, .md, .msg, .rst, .rtf, .txt, .xml, .jpeg, .png, .csv, .doc, .docx, .epub, .odt, .pdf, .ppt, .pptx, .tsv, .xlsx")
     if uploaded_file is not None:
         vectorstore = process_document(uploaded_file, unstructured_api_input, openai_api_key, model, **settings)
 
@@ -84,9 +84,10 @@ def main():
         if not query:
             st.stop()
 
-        answer = query_file(query, openai_api_key, model, vectorstore)
-        st.write("### ANSWER")
-        st.write(answer)
+        with st.spinner("Query your document. This may take a while⏳"):
+            answer = query_file(query, openai_api_key, model, vectorstore)
+            st.write("### ANSWER")
+            st.write(answer)
 
 
 if __name__ == '__main__':
