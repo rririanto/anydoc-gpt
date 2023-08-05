@@ -37,6 +37,16 @@ def main():
 
     :return: None.
     """
+    st.set_page_config(
+        page_title="AnyDocGPT - Extract Insightful data from your docs with GPT AI",
+        page_icon="🤖🧑‍💻",
+        layout="centered",
+        menu_items={
+            'Get Help': 'https://www.patreon.com/ppython',
+            'Report a bug': "https://www.patreon.com/ppython",
+            'About': "### AnyDocGPT - Extract Insightful data from your docs with GPT AI by Rririanto"
+        }
+    )
     intro()
 
     if "enable_api" in st.session_state and st.session_state.enable_api:

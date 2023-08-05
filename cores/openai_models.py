@@ -1,7 +1,8 @@
 import requests
 import streamlit as st
 
-@st.cache_data(ttl=172800)
+
+@st.cache_data()
 def get_gpt_models(api_key):
     headers = {
         'authority': 'api.openai.com',
@@ -23,4 +24,6 @@ def get_gpt_models(api_key):
     response = requests.get(url, headers=headers)
 
     rsp = response.json()
+    print([model['id'] for model in rsp['data']
+          if 'gpt' or 'davinci' in model['id'].lower()])
     return [model['id'] for model in rsp['data'] if 'gpt' or 'davinci' in model['id'].lower()]
