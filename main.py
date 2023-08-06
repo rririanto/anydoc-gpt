@@ -96,6 +96,8 @@ def main():
 
         with st.spinner("Query your document. This may take a while⏳"):
             answer = query_file(query, openai_api_key, model, vectorstore)
+            if not answer:
+                st.error("Oops, something wrong try to refresh")
             st.write("### ANSWER")
             st.write(answer)
 

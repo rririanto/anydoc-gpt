@@ -55,9 +55,11 @@ def split_text_into_chunks(text, model):
 
 
 def create_vectorstore(text_chunks, openai_api_key):
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-    return FAISS.from_documents(documents=text_chunks, embedding=embeddings)
-
+    try:
+        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+        return FAISS.from_documents(documents=text_chunks, embedding=embeddings)
+    except Exception:
+        return []
 
 def query_file(query, openai_api_key, model, vectorstore):
     if "gpt" in model:
@@ -68,15 +70,18 @@ def query_file(query, openai_api_key, model, vectorstore):
          llm = OpenAI(
             openai_api_key=openai_api_key, temperature=0.25, model=model
         )
-    chain = load_qa_with_sources_chain(
-        llm=llm,
-        chain_type="stuff",
-        prompt=STUFF_PROMPT,
-    )
+    try:
+        chain = load_qa_with_sources_chain(
+            llm=llm,
+            chain_type="stuff",
+            prompt=STUFF_PROMPT,
+        )
 
-    relevant_docs = vectorstore.similarity_search(query, k=5)
-    result = chain(
-        {"input_documents": relevant_docs, "question": query}, return_only_outputs=True
-    )
-
-    return result["output_text"].split("SOURCES: ")[0]
+        relevant_docs = vectorstore.similarity_search(query, k=5)
+        result = chain(
+            {"input_documents": relevant_docs, "question": query}, return_only_outputs=True
+        )
+        return result["output_text"].split("SOURCES: ")[0]
+    except Exception:
+        return None
+    
